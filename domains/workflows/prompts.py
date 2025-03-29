@@ -2,7 +2,8 @@
 # from langchain_core.output_parsers import JsonOutputParser
 #
 #
-IMAGE_SUMMARY_GENERATION_PROMPT = """Please provide bullet point summaries for the image in each of the following categories:
+IMAGE_SUMMARY_GENERATION_PROMPT = """
+Please provide bullet point summaries for the image in each of the following categories:
 - Medium:
 - Subject:
 - Scene:

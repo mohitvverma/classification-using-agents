@@ -44,6 +44,7 @@ def calculate_and_log_time(func: Callable) -> Callable:
 
     return async_wrapper if asyncio.iscoroutinefunction(func) else sync_wrapper
 
+
 def get_chat_model(model_key: str = "CHAT_MODEL_NAME", temperature: float = 0.0) -> Union[ChatOpenAI, AzureChatOpenAI, Any]:
     """
     Function to get the chat model based on the provided key.

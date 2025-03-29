@@ -3,26 +3,21 @@ import asyncio
 import pprint
 from typing import Union, Any, Optional
 from domains.utils import get_chat_model
-from langchain_core.messages import HumanMessage
+
 from functools import lru_cache
-from langchain.tools import Tool
 from domains.workflows.handler import retry_with_backoff
 from domains.workflows.prompts import IMAGE_SUMMARY_GENERATION_PROMPT
 from domains.workflows.prompts import initialize_image_classification_prompt
 from domains.injestion.doc_loader import process_image
+from domains.workflows.utils import (
+    summary_generation_prompt,
+    InvalidInputError,
+    ModelProcessingError,
+    ImageProcessingError
+)
 from langchain_core.output_parsers import JsonOutputParser
 from domains.utils import calculate_and_log_time
 from loguru import logger
-
-
-class ImageProcessingError(Exception):
-    """Custom exception for image processing errors"""
-    pass
-
-
-class ModelProcessingError(Exception):
-    """Custom exception for model processing errors"""
-    pass
 
 
 @lru_cache(maxsize=128)
@@ -52,10 +47,6 @@ async def load_image(image_file_path: str, process_type: str, image_type: Option
         raise ImageProcessingError(f"Failed to load image: {str(e)}") from e
 
 
-class InvalidInputError(Exception):
-    """Custom exception for invalid input validation"""
-    pass
-
 
 @retry_with_backoff(max_retries=3, initial_delay=2, backoff_factor=2, max_delay=10)
 @calculate_and_log_time
@@ -82,19 +73,7 @@ async def summarize_image_content(image_contents: Union[str, dict[str, Any]]) ->
             raise InvalidInputError("Invalid image URL format")
 
         summary_response = await chat_model.ainvoke(
-            [
-                HumanMessage(
-                    content=[
-                        {"type": "text", "text": IMAGE_SUMMARY_GENERATION_PROMPT},
-                        {
-                            "type": "image_url",
-                            "image_url": {
-                                "url": image_url
-                            }
-                        },
-                    ]
-                )
-            ],
+            summary_generation_prompt(image_url, IMAGE_SUMMARY_GENERATION_PROMPT)
         )
         return summary_response.content
 
@@ -138,7 +117,7 @@ async def classify_image_content(image_summary: Union[str, dict[str, Any]]) -> d
 if __name__ == "__main__":
     async def main():
         try:
-            image_file_path = "/Users/mohitverma/Downloads/2024-08-16T192529Z_1430337378_RC23H9ADLF7Q_RTRMADP_3_UKRAINE-CRISIS-RUSSIA-BORDER-1400x984.jpg"
+            image_file_path = "/Users/mohitverma/Downloads/untitled-design-28-2.jpg"
             res = await load_image(image_file_path, "base64", 'jpg')
             summary = await summarize_image_content(res.get("image_url"))
             classification = await classify_image_content(summary)
