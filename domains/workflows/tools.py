@@ -48,7 +48,12 @@ async def load_image(image_file_path: str, process_type: str, image_type: Option
 
 
 
-@retry_with_backoff(max_retries=3, initial_delay=2, backoff_factor=2, max_delay=10)
+@retry_with_backoff(
+    max_retries=3,
+    initial_delay=2,
+    backoff_factor=2,
+    max_delay=10
+)
 @calculate_and_log_time
 async def summarize_image_content(image_contents: Union[str, dict[str, Any]]) -> str:
     """Generates a summary of image content using a language model.

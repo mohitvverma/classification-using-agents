@@ -8,6 +8,7 @@ import functools
 import asyncio
 from loguru import logger
 
+from langchain_groq import ChatGroq
 
 def calculate_and_log_time(func: Callable) -> Callable:
     """
@@ -69,3 +70,15 @@ def get_chat_model(model_key: str = "CHAT_MODEL_NAME", temperature: float = 0.0)
             model=config_settings.LLMS.get(model_key, ""),
             temperature=temperature,
         )
+
+    elif config_settings.LLM_SERVICE_TYPE == "groq":
+        return ChatGroq(
+            model="llama-3.2-11b-vision-preview",
+            temperature=temperature,
+            streaming=True,
+        )
+
+
+if __name__ == "__main__":
+    print(get_chat_model().invoke("Hi"))
+

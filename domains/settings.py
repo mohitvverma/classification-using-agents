@@ -17,7 +17,7 @@ class Settings(BaseSettings):
     )
 
     # LLM Service
-    LLM_SERVICE_TYPE: str = os.environ.get("LLM_SERVICE", "openai")
+    LLM_SERVICE_TYPE: str = os.environ.get("LLM_SERVICE", "groq")
 
     # Modular Model Names
     LLMS: ClassVar[dict] = {
