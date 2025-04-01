@@ -68,7 +68,7 @@ async def summarize_image_content(image_contents: Union[str, dict[str, Any]]) ->
         ModelProcessingError: If summarization fails
     """
     try:
-        chat_model = get_cached_model("CHAT_MODEL_NAME", 0.0)
+        chat_model = get_cached_model("SUMMARIZE_VISION_LLM_MODEL", 0.0)
 
         if not chat_model:
             raise ModelProcessingError("Failed to initialize chat model")

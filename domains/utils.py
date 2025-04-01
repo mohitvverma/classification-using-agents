@@ -10,6 +10,7 @@ from loguru import logger
 
 from langchain_groq import ChatGroq
 
+
 def calculate_and_log_time(func: Callable) -> Callable:
     """
     Decorator to calculate and log the execution time of both sync and async functions.
@@ -73,7 +74,7 @@ def get_chat_model(model_key: str = "CHAT_MODEL_NAME", temperature: float = 0.0)
 
     elif config_settings.LLM_SERVICE_TYPE == "groq":
         return ChatGroq(
-            model="llama-3.2-11b-vision-preview",
+            model=config_settings.GROQ_SETTINGS.get(model_key, ""),
             temperature=temperature,
             streaming=True,
         )
